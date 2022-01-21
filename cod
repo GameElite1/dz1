@@ -1,0 +1,70 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+
+
+int main(int argc, const char **argv) {
+    if (argc != 3) {
+        std::cout << "Используйте 2 параметра\n";
+        return 0;
+    }
+    size_t key = 4;
+    size_t leftShift = 3;
+    std::string donecoding;
+    const std::string mode(argv[1]);
+    const std::string name(argv[2]);
+    if (mode == "encryption") {
+        std::string message;
+        std::cout << "Введите сообщение";
+        getline(std::cin, message);
+        const char *data = message.data();
+        unsigned int size = message.size();
+        std::vector<char> bytes(size);
+        for (size_t i = 0; i < size; i++) {
+            bytes[i] = data[i];
+        }
+        srand(key);
+        std::ofstream outFile;
+        outFile.open(name, std::ios::binary);
+        outFile.clear();
+        size_t kol = bytes.size();
+        std::vector<char> hifr(kol);
+
+        for (size_t i = 0; i < kol; i++) {
+            size_t gamma = rand();
+            size_t r1, g;
+            r1 = (static_cast<int>(bytes[i])) ^ gamma;
+            g = (r1 >> 5) | ((r1 << 6) & 0xFF);
+            char go = g;
+            hifr[i] = go;
+        }
+        for (char i: hifr) {
+            std::cout << i;
+        }
+        outFile.close();
+    } else {
+        srand(key);
+        std::cout << "Введите сообщение";
+        std::ifstream kal;
+        kal.open(name, std::ios::binary);
+        std::vector<char> encrypted((std::istreambuf_iterator<char>(kal)), std::istreambuf_iterator<char>());
+        kal.close();
+        size_t kol = encrypted.size();
+        std::vector<char> rashifr(kol);
+        for (size_t i = 0; i < kol; i++) {
+            size_t gamma = rand();
+            char r1 = encrypted[i];
+            size_t r2 = (static_cast<int>(r1));
+            rashifr[i] = char(int(((r1 << 5) & 0xFF) | (r1 >> 6)) ^ gamma);
+        }
+        for (char i: rashifr) {
+            std::cout << i;
+        }
+    }
+    return 0;
+}
+
+
+
+
